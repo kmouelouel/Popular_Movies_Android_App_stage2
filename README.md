@@ -1,9 +1,12 @@
 # Popular_Movies_Android_App_stage2
  
 >Popular Movies Stage 1&2 is an android app that allows the users to discover the most popular movies playing.
->In the Stage1,the app is arranged by grids. the users can change sort order of movies via a setting: The sort order can be by most popular or by highest-rated.
+>In the Stage1,the app is arranged by grids. the users can change sort order of movies via a setting: The sort order can be by most popular or by highest-rated .
+
 >By clicking on the movie poster, a detail movie will be display in the screen having the title,image poster, release date, vote average , and the overview of movie.
->in the Stage 2, we added more information to the movie details view which had a list of movie trailers and reviews, and the possibility to make the movie favorite by clicking on favorite icon.
+
+>in the Stage 2, we added more information to the movie details view which had a list of movie trailers and reviews, and the possibility to make the movie favorite by clicking on favorite icon .
+
 >showing the favorites collection movies in the main view by selecting "favorites" option in the setting menu.
 
 This project was developed as a part of [Android Developer Nanodegree] https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801
@@ -16,7 +19,8 @@ This project was developed as a part of [Android Developer Nanodegree] https://w
 
 ## What did I Learn?
 Through this project, I learned:
-_to create a database to store the movie data of the user's favorite movies.
+
+- to create a database to store the movie data of the user's favorite movies.
 - to build clean and compelling user interfaces (UIs),
 - to fetch data from network services, 
 - to get data from database using ContentProvider
