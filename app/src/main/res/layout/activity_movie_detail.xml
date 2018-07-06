@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MovieDetail">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/details_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                style="@style/TextAppearance.AppCompat.Headline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/teal500"
+                android:padding="20dp"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="This is a short title" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/image_details_poster"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/backdrop_image"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_release_date"
+                        style="@style/MovieDetailYearAndRating"
+                        tools:text="2016-05-01" />
+
+                    <TextView
+                        android:id="@+id/tv_rating"
+                        style="@style/MovieDetailYearAndRating"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"
+                        tools:text="4" />
+
+
+                    <ImageView
+                        android:id="@+id/favorite_Image"
+                        android:layout_width="50dp"
+                        android:layout_height="0dp"
+                        android:layout_margin="20dp"
+                        android:layout_weight="1"
+                        android:paddingRight="20dp"
+                        android:src="@drawable/ic_unfavorite" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tv_overview"
+                style="@style/MovieTextStyle"
+                tools:text="this is overview about the movie, short description." />
+
+            <View
+                android:id="@+id/view_before_trailer"
+                style="@style/horizontalLine"
+                android:layout_width="match_parent" />
+
+            <TextView
+                android:id="@+id/text_trailer_title"
+                style="@style/TrailerReviewsTitle"
+                android:text="@string/trailer_title" />
+
+
+            <LinearLayout
+                android:id="@+id/layout_trailers_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <View
+                android:id="@+id/view_before_review"
+                style="@style/horizontalLine"
+                android:layout_width="match_parent" />
+
+
+            <TextView
+                android:id="@+id/text_Reviews_title"
+                style="@style/TrailerReviewsTitle"
+                android:text="@string/Review_title" />
+
+            <LinearLayout
+                android:id="@+id/layout_reviews_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>
