@@ -3,7 +3,6 @@ package com.example.android.popularmoviesstage1;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
@@ -24,28 +23,37 @@ import com.example.android.popularmoviesstage1.utilities.FavoriteMoviesAsyncTask
 import com.example.android.popularmoviesstage1.utilities.FetchMoviesTask;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String LIFECYCLE_CALLBACKS_MENU_SETTING = "optionSelected";
-    private static String SORT_PATH = "top_rated";
-    private ProgressBar mLoadingIndicator;
-    private TextView mErrorMessageDisplay;
-    private GridView mGridView;
+    private static final String MOVIE_DATA = "movieDetails";
+    private static final String TOP_RATED_FILTER = "top_rated";
+    private static final String POPULAR_FILTER = "popular";
+    private static final String FAVORITE_FILTER = "favorite";
+    private static String SORT_PATH = TOP_RATED_FILTER;
+    @BindView(R.id.pb_Loading_indicator) ProgressBar mLoadingIndicator;
+    @BindView(R.id.tv_error_message_display) TextView mErrorMessageDisplay;
+    @BindView(R.id.gridview) GridView mGridView;
     private GridViewAdapter gridViewAdapter;
     private int selectedOption = R.id.action_highest_rated;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_Loading_indicator);
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
-        //set the GridView :
+        ButterKnife.bind(this);
+      //set the GridView :
         gridViewAdapter = new GridViewAdapter(MainActivity.this, new ArrayList<Movie>());
-        mGridView = (GridView) findViewById(R.id.gridview);
+    //    mGridView = (GridView) findViewById(R.id.gridview);
         mGridView.setAdapter(gridViewAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -54,16 +62,16 @@ public class MainActivity extends AppCompatActivity {
                 Context context = getApplicationContext();
                 Class destination = MovieDetail.class;
                 Intent intentToDisplayMovieDetails = new Intent(context, destination);
-                intentToDisplayMovieDetails.putExtra("movieDetails", MovieSelectedData);
+                intentToDisplayMovieDetails.putExtra(MOVIE_DATA, MovieSelectedData);
                 startActivity(intentToDisplayMovieDetails);
 
             }
         });
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_MENU_SETTING)) {
-                selectedOption = savedInstanceState.getInt(LIFECYCLE_CALLBACKS_MENU_SETTING);
-                loadAdapterPerOptionSelected(selectedOption);
-            }
+        // mListStateMovies=(Parcelable) gridViewAdapter.getAllData();
+        if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_MENU_SETTING)) {
+            selectedOption = savedInstanceState.getInt(LIFECYCLE_CALLBACKS_MENU_SETTING);
+            loadAdapterPerOptionSelected(selectedOption);
+
         } else {
             loadMovieData(SORT_PATH);
         }
@@ -79,18 +87,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMovieData(String sortPath) {
-        if (sortPath.equals("top_rated") || sortPath.equals("popular")) {
+        gridViewAdapter.clear();
+        if (sortPath.equals(FAVORITE_FILTER)) {
+            FavoriteMoviesAsyncTask favoriteMoviesAsyncTask = new FavoriteMoviesAsyncTask(MainActivity.this, gridViewAdapter);
+            favoriteMoviesAsyncTask.execute();
+        } else if (sortPath.equals(TOP_RATED_FILTER) || sortPath.equals(POPULAR_FILTER)) {
             if (isNetworkAvailable()) {
                 FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(MainActivity.this, gridViewAdapter);
                 fetchMoviesTask.execute(sortPath);
+            } else {
+                Log.e(TAG, "A problem with your internet connection!");
+                mErrorMessageDisplay.setText(R.string.no_internet);
+                mErrorMessageDisplay.setVisibility(View.VISIBLE);
             }
-        } else if (sortPath.equals("favorites")) {
-            FavoriteMoviesAsyncTask favoriteMoviesAsyncTask = new FavoriteMoviesAsyncTask(MainActivity.this, gridViewAdapter);
-            favoriteMoviesAsyncTask.execute();
-        } else {
-            Log.e(TAG, "A problem with your internet connection!");
-            mErrorMessageDisplay.setText("You do not have an internet connection...");
-            mErrorMessageDisplay.setVisibility(View.VISIBLE);
+
         }
 
     }
@@ -112,18 +122,18 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         mLoadingIndicator.setVisibility(View.VISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        gridViewAdapter.clear();
+        selectedOption = item.getItemId();
         switch (item.getItemId()) {
             case R.id.action_most_popular:
-                SORT_PATH = "popular";
+                SORT_PATH = POPULAR_FILTER;
                 loadMovieData(SORT_PATH);
                 return true;
             case R.id.action_highest_rated:
-                SORT_PATH = "top_rated";
+                SORT_PATH = TOP_RATED_FILTER;
                 loadMovieData(SORT_PATH);
                 return true;
             case R.id.action_favorite_movies:
-                SORT_PATH = "favorites";
+                SORT_PATH = FAVORITE_FILTER;
                 loadMovieData(SORT_PATH);
                 return true;
             default:
@@ -137,12 +147,12 @@ public class MainActivity extends AppCompatActivity {
     private void loadAdapterPerOptionSelected(int selectedOption) {
         selectedOption = selectedOption;
         if (selectedOption == R.id.action_most_popular) {
-            SORT_PATH = "popular";
+            SORT_PATH = POPULAR_FILTER;
 
         } else if (selectedOption == R.id.action_highest_rated) {
-            SORT_PATH = "top_rated";
+            SORT_PATH = TOP_RATED_FILTER;
         } else if (selectedOption == R.id.action_favorite_movies) {
-            SORT_PATH = "favorites";
+            SORT_PATH = FAVORITE_FILTER;
         }
         loadMovieData(SORT_PATH);
     }
@@ -155,5 +165,9 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(LIFECYCLE_CALLBACKS_MENU_SETTING, selectedOption);
     }
 
-
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedOption = savedInstanceState.getInt(LIFECYCLE_CALLBACKS_MENU_SETTING);
+    }
 }

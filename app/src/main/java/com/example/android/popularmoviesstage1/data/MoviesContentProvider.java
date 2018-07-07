@@ -3,6 +3,7 @@ package com.example.android.popularmoviesstage1.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,36 +11,40 @@ import android.net.Uri;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.example.android.popularmoviesstage1.data.MoviesContract.MoviesEntry;
+
+import static com.example.android.popularmoviesstage1.data.MoviesContract.MoviesEntry.TABLE_NAME;
 
 public class MoviesContentProvider extends ContentProvider {
 
     public static final int MOVIES = 100;
     public static final int MOVIE_WITH_ID = 101;
-    public final static UriMatcher uriMatcher = buildUriMatcher();
+    public final static UriMatcher sUriMatcher = buildUriMatcher();
     private MoviesDbHelper dbHelper;
 
     public static UriMatcher buildUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(MoviesContract.AUTHORITY, MoviesContract.PATH, MOVIES);
-        uriMatcher.addURI(MoviesContract.AUTHORITY, MoviesContract.PATH + "/#", MOVIE_WITH_ID);
+        uriMatcher.addURI(MoviesContract.AUTHORITY, MoviesContract.PATH+ "/#", MOVIE_WITH_ID);
         return uriMatcher;
     }
 
     @Override
     public boolean onCreate() {
-        dbHelper = new MoviesDbHelper(getContext());
+        Context context= getContext();
+        dbHelper = new MoviesDbHelper(context);
         return true;
     }
 
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        int match = uriMatcher.match(uri);
-        Cursor cursor;
+       final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        int match = sUriMatcher.match(uri);
+        Cursor retCursor;
         switch (match) {
             case MOVIES:
-                cursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
+                retCursor = db.query(TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -51,8 +56,8 @@ public class MoviesContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 
         }
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return cursor;
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
     @Nullable
@@ -65,11 +70,11 @@ public class MoviesContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int match = uriMatcher.match(uri);
+        int match = sUriMatcher.match(uri);
         Uri returnUri;
         switch (match) {
             case MOVIES:
-                long id = db.insert(MoviesContract.MoviesEntry.TABLE_NAME, null, values);
+                long id = db.insert(TABLE_NAME, null, values);
                 if (id > 0) {
                     returnUri = ContentUris.withAppendedId(MoviesContract.MoviesEntry.CONTENT_URI, id);
                 } else {
@@ -88,22 +93,23 @@ public class MoviesContentProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int match = uriMatcher.match(uri);
-        int rowDelete = 0;
+        int match = sUriMatcher.match(uri);
+        int rowDeleted = 0;
         switch (match) {
-            case MOVIES:
-                rowDelete = db.delete(MoviesContract.MoviesEntry.TABLE_NAME, selection, selectionArgs);
+            case MOVIE_WITH_ID:
+                selectionArgs = new String[]{uri.getLastPathSegment()};
+                rowDeleted = db.delete(TABLE_NAME,  MoviesEntry.COLUMN_MOVIE_ID + " = ? ", selectionArgs);
                 break;
             default:
                 db.close();
-                throw new UnsupportedOperationException("impossible to delete this data from database");
+                throw new UnsupportedOperationException("Couldn't delete :(");
         }
-        if (rowDelete != 0) {
+        if (rowDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
         db.close();
-        return rowDelete;
+        return rowDeleted;
     }
 
     @Override

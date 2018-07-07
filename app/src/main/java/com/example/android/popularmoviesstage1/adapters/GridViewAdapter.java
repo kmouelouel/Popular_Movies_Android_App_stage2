@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.android.popularmoviesstage1.R;
 import com.example.android.popularmoviesstage1.models.Movie;
@@ -83,6 +84,7 @@ public class GridViewAdapter extends BaseAdapter {
         mMovies.clear();
         notifyDataSetChanged();
     }
+
 
     public void setData(List<Movie> data) {
         clear();

@@ -3,6 +3,8 @@ package com.example.android.popularmoviesstage1;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
@@ -39,17 +41,19 @@ public class MovieDetail extends AppCompatActivity {
     ActivityMovieDetailBinding mBinding;
     //added variables for stage 2
     private MoviesDbHelper moviesDbHelper;
+    private static  final String MOVIE_DATA="movieDetails";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+
         //  Set the Content View using DataBindingUtil to the activity_movie_detail layout
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
-
+         //get the Movie Data that passed from MainActivity
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
-            if (intentThatStartedThisActivity.hasExtra("movieDetails")) {
+            if (intentThatStartedThisActivity.hasExtra(MOVIE_DATA)) {
                 final Movie mMovie = (Movie) intentThatStartedThisActivity.getParcelableExtra("movieDetails");
                 displayMovieInfo(mMovie);
                 moviesDbHelper = new MoviesDbHelper(this);
@@ -65,7 +69,7 @@ public class MovieDetail extends AppCompatActivity {
                             saveMovieInDatabase(mMovie);
                         } else {
                             changeColorOfFavoriteIcon(false);
-                            delelteMovieFromDatabase(mMovie);
+                            deleteMovieFromDatabase(mMovie);
                         }
 
                     }
@@ -158,8 +162,15 @@ public class MovieDetail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(NetworkUtils.buildYouTubeUrl(trailer.getKey())));
-                startActivity(intent);
+                PackageManager packageManager = getApplicationContext().getPackageManager();
+                List<ResolveInfo> infos = packageManager.queryIntentActivities(intent,0);
+                if(infos.size()>0){
+                    intent.setData(Uri.parse(NetworkUtils.buildYouTubeUrl(trailer.getKey())));
+                    startActivity(intent);
+                }else{
+                    Log.d(TAG, "No Intent available to handle action");
+                }
+
             }
         });
         return view;
@@ -216,13 +227,20 @@ public class MovieDetail extends AppCompatActivity {
         contentValues.put(MoviesContract.MoviesEntry.COLUMN_MOVIE_POSTER_PATH, movieIsFavorite.getPoster());
         contentValues.put(MoviesContract.MoviesEntry.COLUMN_MOVIE_RELEASE_DATE, movieIsFavorite.getDate());
         contentValues.put(MoviesContract.MoviesEntry.COLUMN_MOVIE_VOTE_AVERAGE, movieIsFavorite.getRating());
+
         getContentResolver().insert(MoviesContract.MoviesEntry.CONTENT_URI, contentValues);
     }
 
-    private void delelteMovieFromDatabase(Movie movieIsUnFavorite) {
-        String selection = MoviesContract.MoviesEntry.COLUMN_MOVIE_ID + "=?";
-        String[] selectionArgs = {String.valueOf(movieIsUnFavorite.getId())};
-        getContentResolver().delete(MoviesContract.MoviesEntry.CONTENT_URI, selection, selectionArgs);
+    private void deleteMovieFromDatabase(Movie movieIsUnFavorite) {
+        int id = movieIsUnFavorite.getId();
+        String stringId = Integer.toString(id);
+        // Build appropriate uri with String row id appended
+
+        Uri uri = MoviesContract.MoviesEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(stringId).build();
+
+        // COMPLETED (2) Delete a single row of data using a ContentResolver
+        getContentResolver().delete(uri, null, null);
 
     }
 

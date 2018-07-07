@@ -14,5 +14,6 @@
     <string name="trailer_site_youtube">YouTube</string>
     <string name="trailer_title">Trailers:</string>
     <string name="Review_title">Reviews:</string>
+    <string name="no_internet">you do not currently have a internet connection</string>
 
 </resources>

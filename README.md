@@ -7,7 +7,7 @@
 
 >in the Stage 2, we added more information to the movie details view which had a list of movie trailers and reviews, and the possibility to make the movie favorite by clicking on favorite icon .
 
->showing the favorites collection movies in the main view by selecting "favorites" option in the setting menu.
+>showing the favorites collection movies in the main view by selecting "favorites" option in the settings' menu.
 
 This project was developed as a part of [Android Developer Nanodegree] https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801
 
