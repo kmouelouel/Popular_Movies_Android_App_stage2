@@ -21,12 +21,18 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
     private TextView mErrorMessageDisplay;
     private GridView mGridView;
     private GridViewAdapter mGridViewAdapter;
-    private UserInterfaceViews userInterfaceViews;
 
     public FetchMoviesTask(Context context, GridViewAdapter gridViewAdapter) {
         mGridViewAdapter = gridViewAdapter;
         mContext = context;
-        userInterfaceViews = new UserInterfaceViews(mContext);
+        mLoadingIndicator = (ProgressBar) ((MainActivity) mContext).findViewById(R.id.pb_Loading_indicator);
+        ;
+        mErrorMessageDisplay = (TextView) ((MainActivity) mContext).findViewById(R.id.tv_error_message_display);
+        ;
+        mGridView = (GridView) ((MainActivity) mContext).findViewById(R.id.gridview);
+        ;
+
+
     }
 
     @Override
@@ -50,20 +56,31 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        userInterfaceViews.setLoadingToVisible();
+        mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onPostExecute(List<Movie> movies) {
         super.onPostExecute(movies);
-        userInterfaceViews.setLoadingToInvisible();
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
         if (movies != null) {
-            userInterfaceViews.showMovieDataView();
+            showMovieDataView();
             mGridViewAdapter.setData(movies);
         } else {
-            userInterfaceViews.showErrorMessage();
+            showErrorMessage();
         }
     }
 
+    private void showMovieDataView() {
+        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        mGridView.setVisibility(View.VISIBLE);
+
+    }
+
+    private void showErrorMessage() {
+        mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        mGridView.setVisibility(View.INVISIBLE);
+
+    }
 
 }

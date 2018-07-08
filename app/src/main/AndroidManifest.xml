@@ -27,10 +27,6 @@
                 android:value=".MainActivity"/>
 
         </activity>
-        <provider
-            android:authorities="com.example.android.popularmoviesstage1"
-            android:name="com.example.android.popularmoviesstage1.data.MoviesContentProvider"
-            android:exported="false"/>
     </application>
 
 </manifest>
