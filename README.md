@@ -1,22 +1,29 @@
-# Popular_Movies_Android_App_stage1
+# Popular_Movies_Android_App_stage2
  
->Popular Movies Stage1 is an android app that allows the users to discover the most popular movies playing.
->In the Stage1,the app is arranged by grids. the users can change sort order of movies via a setting: The sort order can be by most popular or by highest-rated.
->By clicking on the movie poster, a detail movie will be display in the screen  having the title,image poster, release date, vote average , and the overview of movie.
- 
+>Popular Movies Stage 1&2 is an android app that allows the users to discover the most popular movies playing.
+>In the Stage1,the app is arranged by grids. the users can change sort order of movies via a setting: The sort order can be by most popular or by highest-rated .
+
+>By clicking on the movie poster, a detail movie will be display in the screen having the title,image poster, release date, vote average , and the overview of movie.
+
+>in the Stage 2, we added more information to the movie details view which had a list of movie trailers and reviews, and the possibility to make the movie favorite by clicking on favorite icon .
+
+>showing the favorites collection movies in the main view by selecting "favorites" option in the setting menu.
+
 This project was developed as a part of [Android Developer Nanodegree] https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801
 
 ##Note:
 
->The API key that I utilized, has been removed from your code. 
->in order to run the app, You have to add your *API-Key* in the class (../utilities/NetworkUtils.java).
+>The API key that I utilized, has been removed from your code.
+>in order to run the app, You have to add your *API-Key* in the file (../gradle.properties).
 
 
 ## What did I Learn?
 Through this project, I learned:
 
+- to create a database to store the movie data of the user's favorite movies.
 - to build clean and compelling user interfaces (UIs),
 - to fetch data from network services, 
+- to get data from database using ContentProvider
 - to  optimize the experience for various mobile devices.
 - to pass data between  activities.
 - to implement adapters and custom list layouts to populate list views.
@@ -37,6 +44,9 @@ SOFTWARE.
 
 ## Screenshots
 
-![HighestRated_Movies screenshot](./screenshots/PopMoviesByHighestRated.png)
-![MostPopular_Movies screenshot](./screenshots/PopMoviesByMostPopular.png)
-![Movie_Details screenshot](./screenshots/PopMoviesDetail.png) 
+![MostPopular_Movies screenshot](./screenshots/popularMoviesPopular.png)
+![HighestRated_Movies screenshot](./screenshots/popularMoviesToprated.png)
+![Favorites_Movies screenshot](./screenshots/popularMoviesFavorites.png)
+![MovieDetail_Movies screenshot](./screenshots/movieDetailunfavorite.png)
+![FavoriteMovie_Movies screenshot](./screenshots/movieDetailFavorite.png)
+![TrailerAndReviesDetail_Movies screenshot](./screenshots/movieDetailTrailersAndReviews.png) 

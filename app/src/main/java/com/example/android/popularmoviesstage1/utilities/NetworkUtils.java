@@ -1,6 +1,7 @@
 package com.example.android.popularmoviesstage1.utilities;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.android.popularmoviesstage1.BuildConfig;
 
@@ -16,17 +17,17 @@ public class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private static final String API_KEY = BuildConfig.API_KEY;
-     private final static String API_KEY_PARAM = "api_key";
+    private final static String API_KEY_PARAM = "api_key";
 
     public static URL buildUrl(String sortPath) {
-   //https://api.themoviedb.org/3/movie/top_rated?api_key=api_key
-       Uri.Builder builtUri = new Uri.Builder();
+        //https://api.themoviedb.org/3/movie/top_rated?api_key=api_key
+        Uri.Builder builtUri = new Uri.Builder();
         builtUri.scheme("https")
-               .authority("api.themoviedb.org")
-               .appendPath("3")
-               .appendPath("movie")
-               .appendPath(sortPath)
-               .appendQueryParameter(API_KEY_PARAM,API_KEY);
+                .authority("api.themoviedb.org")
+                .appendPath("3")
+                .appendPath("movie")
+                .appendPath(sortPath)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY);
 
         URL url = null;
         try {
@@ -58,7 +59,33 @@ public class NetworkUtils {
     }
 
     public static String buildPosterUrl(String posterPath) {
-        return "http://image.tmdb.org/t/p/w185/" + posterPath;
+        return "http://image.tmdb.org/t/p/w342/" + posterPath;
+    }
+
+    //Stage 2: build URL To fetch Trailers or reviews
+
+    public static URL buildTrailersOrReviewsUrl(String id, String trailerOrReview) {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .authority("api.themoviedb.org")
+                .appendPath("3")
+                .appendPath("movie")
+                .appendPath(id)
+                .appendPath(trailerOrReview)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY);
+        URL url = null;
+        try {
+            url = new URL(builder.build().toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Error in building URL to fetch trailers or reviews");
+        }
+        return url;
+    }
+
+    public static String buildYouTubeUrl(String key) {
+        String baseUrl = "https://www.youtube.com/watch?v=";
+        return baseUrl + key;
     }
 
 

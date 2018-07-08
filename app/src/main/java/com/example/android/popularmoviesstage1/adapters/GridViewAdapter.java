@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.android.popularmoviesstage1.R;
 import com.example.android.popularmoviesstage1.models.Movie;
@@ -24,10 +25,6 @@ public class GridViewAdapter extends BaseAdapter {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMovies = movies;
 
-    }
-
-    public void setmMovies(List<Movie> mMovies) {
-        this.mMovies = mMovies;
     }
 
     @Override
@@ -57,6 +54,10 @@ public class GridViewAdapter extends BaseAdapter {
         return mMovies;
     }
 
+    public void setmMovies(List<Movie> mMovies) {
+        this.mMovies = mMovies;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
@@ -74,14 +75,6 @@ public class GridViewAdapter extends BaseAdapter {
         return view;
     }
 
-    public static class ViewHolder {
-        public final ImageView imageView;
-
-        public ViewHolder(View view) {
-            imageView = (ImageView) view.findViewById(R.id.grid_item_image);
-        }
-    }
-
     public void add(Movie movie) {
         mMovies.add(movie);
         notifyDataSetChanged();
@@ -92,6 +85,7 @@ public class GridViewAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+
     public void setData(List<Movie> data) {
         clear();
         for (Movie movie : data) {
@@ -99,6 +93,13 @@ public class GridViewAdapter extends BaseAdapter {
         }
     }
 
+    public static class ViewHolder {
+        public final ImageView imageView;
+
+        public ViewHolder(View view) {
+            imageView = (ImageView) view.findViewById(R.id.grid_item_image);
+        }
+    }
 
 
 }
