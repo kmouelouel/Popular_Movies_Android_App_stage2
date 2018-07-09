@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static String SORT_PATH = TOP_RATED_FILTER;
     @BindView(R.id.pb_Loading_indicator) ProgressBar mLoadingIndicator;
     @BindView(R.id.tv_error_message_display) TextView mErrorMessageDisplay;
-    @BindView(R.id.gridview) GridView mGridView;
+    @BindView(R.id.gridView) GridView mGridView;
 
     private GridViewAdapter gridViewAdapter;
     private int selectedOption = R.id.action_highest_rated;

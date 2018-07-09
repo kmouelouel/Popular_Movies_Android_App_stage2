@@ -24,7 +24,7 @@ public class UserInterfaceViews {
 
         mLoadingIndicator = (ProgressBar) ((MainActivity) mContext).findViewById(R.id.pb_Loading_indicator);
         mErrorMessageDisplay = (TextView) ((MainActivity) mContext).findViewById(R.id.tv_error_message_display);
-        mGridView = (GridView) ((MainActivity) mContext).findViewById(R.id.gridview);
+        mGridView = (GridView) ((MainActivity) mContext).findViewById(R.id.gridView);
     }
 
     public void setLoadingToVisible(){
