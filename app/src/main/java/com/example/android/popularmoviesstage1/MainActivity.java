@@ -39,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String POPULAR_FILTER = "popular";
     private static final String FAVORITE_FILTER = "favorite";
     private static String SORT_PATH = TOP_RATED_FILTER;
-    @BindView(R.id.pb_Loading_indicator) ProgressBar mLoadingIndicator;
-    @BindView(R.id.tv_error_message_display) TextView mErrorMessageDisplay;
-    @BindView(R.id.gridView) GridView mGridView;
+    @BindView(R.id.pb_Loading_indicator)
+    ProgressBar mLoadingIndicator;
+    @BindView(R.id.tv_error_message_display)
+    TextView mErrorMessageDisplay;
+    @BindView(R.id.gridView)
+    GridView mGridView;
 
     private GridViewAdapter gridViewAdapter;
     private int selectedOption = R.id.action_highest_rated;
-
 
 
     @Override
@@ -53,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-      //set the GridView :
+        //set the GridView :
         gridViewAdapter = new GridViewAdapter(MainActivity.this, new ArrayList<Movie>());
-    //    mGridView = (GridView) findViewById(R.id.gridview);
+        //    mGridView = (GridView) findViewById(R.id.gridview);
         mGridView.setAdapter(gridViewAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -69,12 +71,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        if (savedInstanceState != null && savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_MENU_SETTING)) {
+
+        if (savedInstanceState != null) {
             loadAdapterPerOptionSelected(
-                    savedInstanceState.getInt(LIFECYCLE_CALLBACKS_MENU_SETTING, R.id.action_highest_rated));
+                    savedInstanceState.getInt(LIFECYCLE_CALLBACKS_MENU_SETTING, selectedOption));
 
         } else {
-          loadMovieData(SORT_PATH);
+            loadMovieData(SORT_PATH);
         }
     }// end OnCreate
 
@@ -90,22 +93,23 @@ public class MainActivity extends AppCompatActivity {
     private void loadMovieData(String sortPath) {
         gridViewAdapter.clear();
         if (sortPath.equals(FAVORITE_FILTER)) {
-            this.selectedOption=R.id.action_favorite_movies;
+            this.selectedOption = R.id.action_favorite_movies;
             FavoriteMoviesAsyncTask favoriteMoviesAsyncTask = new FavoriteMoviesAsyncTask(MainActivity.this, gridViewAdapter);
             favoriteMoviesAsyncTask.execute();
         } else if (sortPath.equals(TOP_RATED_FILTER) || sortPath.equals(POPULAR_FILTER)) {
             if (isNetworkAvailable()) {
-                this.selectedOption=(sortPath.equals(TOP_RATED_FILTER))?R.id.action_highest_rated: R.id.action_most_popular;
+                this.selectedOption = (sortPath.equals(TOP_RATED_FILTER)) ? R.id.action_highest_rated : R.id.action_most_popular;
                 FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(MainActivity.this, gridViewAdapter);
                 fetchMoviesTask.execute(sortPath);
             } else {
                 Log.e(TAG, "A problem with your internet connection!");
                 mErrorMessageDisplay.setText(R.string.no_internet);
                 mErrorMessageDisplay.setVisibility(View.VISIBLE);
-
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                this.selectedOption = 0;
             }
-
         }
+        UpdateTitle(this.selectedOption);
 
     }
 
@@ -127,16 +131,18 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator.setVisibility(View.VISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         loadAdapterPerOptionSelected(item.getItemId());
-       return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
 
     }
 
 
     private void loadAdapterPerOptionSelected(int inSelectedOption) {
-         if (inSelectedOption == R.id.action_highest_rated) {
+        selectedOption = inSelectedOption;
+        UpdateTitle(inSelectedOption);
+        if (inSelectedOption == R.id.action_highest_rated) {
             SORT_PATH = TOP_RATED_FILTER;
 
-        } else if  (inSelectedOption == R.id.action_most_popular) {
+        } else if (inSelectedOption == R.id.action_most_popular) {
             SORT_PATH = POPULAR_FILTER;
         } else if (inSelectedOption == R.id.action_favorite_movies) {
             SORT_PATH = FAVORITE_FILTER;
@@ -152,9 +158,21 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(LIFECYCLE_CALLBACKS_MENU_SETTING, selectedOption);
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        this.selectedOption=savedInstanceState.getInt(LIFECYCLE_CALLBACKS_MENU_SETTING);
+    private void UpdateTitle(int inSelectedOption) {
+        switch (inSelectedOption) {
+            case R.id.action_highest_rated:
+                this.setTitle("Popular Movies - " + "Top Rated");
+                break;
+            case R.id.action_most_popular:
+                this.setTitle("Popular Movies - " + "Popular");
+                break;
+            case R.id.action_favorite_movies:
+                this.setTitle("Popular Movies - " + "Favorites");
+                break;
+            default:
+                this.setTitle("Popular Movies");
+        }
+
     }
+
 }
